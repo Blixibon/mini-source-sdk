@@ -1,3 +1,10 @@
+
+$Games
+{
+	"HL2"
+	"EPISODIC"
+}
+
 $Conditional "SOURCESDK" "1"
 
 $Include "vpc_scripts\projects.vgc"
