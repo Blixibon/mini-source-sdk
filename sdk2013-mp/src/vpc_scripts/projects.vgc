@@ -17,3 +17,8 @@ $Project "tier1"
 {
 	"tier1\tier1.vpc" 	[!$GAME_ASW]
 }
+
+$Project "vgui_controls"
+{
+	"vgui2\vgui_controls\vgui_controls.vpc" 	[!$GAME_ASW]
+}
