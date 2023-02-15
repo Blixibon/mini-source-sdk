@@ -35,6 +35,7 @@ $Configuration
 		$DisableSpecificWarnings	"$BASE;4838" // warning C4838: conversion from 'unsigned int' to 'const int32' requires a narrowing conversion
 		$DisableSpecificWarnings	"$BASE;5054" // warning C5054: operator '|': deprecated between enumerations of different types (compiling source file utlsymbol.cpp)
 		$DisableSpecificWarnings	"$BASE;5205" // warning C5205: delete of an abstract class 'ICvar::ICVarIteratorInternal' that has a non-virtual destructor results in undefined behavior
+		$DisableSpecificWarnings	"$BASE;4459" // warning C4459: declaration of 'cvar' hides global declaration
 
 		// Having lots of warnings makes it harder to notice new, and possibly
 		// important warnings, both on buildbot and in the output window. Lots
@@ -58,6 +59,7 @@ $Configuration
 		// improve linker speed, and improve conformance. Requires VS 2013 Update 3
 		$AdditionalOptions	"$BASE /Zc:inline"
 
-		$AdditionalOptions	"$BASE /std:c++20"
+		// TODO: Resolve problems in vgui_controls and restore c++20
+		//$AdditionalOptions	"$BASE /std:c++20"
 	}
 }

@@ -23,6 +23,16 @@ HOSTNAME := $(shell hostname)
 #   CC = clang
 #   CXX = clang++
 
+MAKEFILE_LINK:=$(THISFILE).link
+
+-include $(MAKEFILE_LINK)
+
+# depend on CXX so the correct makefile can be selected when the system is updated
+$(MAKEFILE_LINK): $(shell which $(CXX)) $(THISFILE) $(SRCROOT)/devtools/gcc9+support.cpp
+	@ if [ "$(shell printf "$(shell $(CXX) -dumpversion)\n8" | sort -Vr | head -1)" != 8 ]; then \
+		$(COMPILE.cpp) -m32 -o $(SRCROOT)/devtools/gcc9+support.o $(SRCROOT)/devtools/gcc9+support.cpp ;\
+	fi
+
 ifeq ($(CFG), release)
 	# With gcc 4.6.3, engine.so went from 7,383,765 to 8,429,109 when building with -O3.
 	#  There also was no speed difference running at 1280x1024. May 2012, mikesart.
@@ -44,7 +54,9 @@ CFLAGS = $(ARCH_FLAGS) $(CPPFLAGS) $(WARN_FLAGS) -fvisibility=$(SymbolVisibility
 ifeq ($(CXX),clang++)
 	CXXFLAGS = $(CFLAGS) -std=gnu++0x -Wno-c++11-narrowing -Wno-dangling-else
 else
-	CXXFLAGS = $(CFLAGS) $(WARN_CXX_FLAGS) -std=gnu++20 -Wno-narrowing -Wno-register -Wno-deprecated-enum-enum-conversion -Wno-deprecated-declarations -fpermissive -Wno-volatile -Wno-ignored-attributes -I/usr/include/freetype2
+	# TODO: Resolve problems in vgui_controls and restore c++20
+	#CXXFLAGS = $(CFLAGS) $(WARN_CXX_FLAGS) -std=gnu++20 -Wno-narrowing -Wno-register -Wno-deprecated-enum-enum-conversion -Wno-deprecated-declarations -fpermissive -Wno-volatile -Wno-ignored-attributes -I/usr/include/freetype2
+	CXXFLAGS = $(CFLAGS) $(WARN_CXX_FLAGS) -std=gnu++0x -Wno-narrowing -Wno-deprecated-enum-enum-conversion -Wno-deprecated-declarations -fpermissive
 endif
 DEFINES += -DVPROF_LEVEL=1 -DGNUC -DNO_HOOK_MALLOC -DNO_MALLOC_OVERRIDE
 LDFLAGS = $(CFLAGS) $(GCC_ExtraLinkerFlags) $(OptimizerLevel)
@@ -178,7 +190,7 @@ ifeq ($(OS),Linux)
 	LIB_END_EXE = -Wl,--end-group -lm -ldl $(LIBSTDCXX) -lpthread 
 
 	LIB_START_SHLIB = $(PATHWRAP) -static-libgcc -Wl,--start-group
-	LIB_END_SHLIB = -Wl,--end-group -lm -ldl $(LIBSTDCXXPIC) -lpthread -l:$(LD_SO) -Wl,--version-script=$(SRCROOT)/devtools/version_script.linux.txt
+	LIB_END_SHLIB = -Wl,--end-group $(SRCROOT)/devtools/gcc9+support.o -lm -ldl $(LIBSTDCXXPIC) -lpthread -l:$(LD_SO) -Wl,--version-script=$(SRCROOT)/devtools/version_script.linux.txt
 
 endif
 

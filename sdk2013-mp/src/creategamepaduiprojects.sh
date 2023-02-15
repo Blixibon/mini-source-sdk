@@ -1,1 +1,1 @@
-devtools/bin/vpc /hl2 /episodic +gamepadui /mksln gamepadui
+devtools/bin/vpc /episodic +gamepadui /mksln gamepadui
